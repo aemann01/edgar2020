@@ -210,10 +210,10 @@ system("mv rep_set_fix.fa rep_set.fa")
 ################Load back into R
 
 #if you must save your sequence table and load it back in before doing taxonomy assignments, here is how to reformat the object so that dada2 will accept it again
-# seqtab.nosingletons.nochim <- fread("sequence_table.16s.merged.txt", sep="\t", header=T, colClasses = c("row_names"="character"), data.table=FALSE)
-# row.names(seqtab.nosingletons.nochim) <- seqtab.nosingletons.nochim[,1] #set row names
-# seqtab.nosingletons.nochim <- seqtab.nosingletons.nochim[,-1] #remove column with the row names in it
-# seqtab.nosingletons.nochim <- as.matrix(seqtab.nosingletons.nochim) #cast the object as a matrix
+seqtab.nosingletons.nochim <- fread("sequence_table.16s.merged.txt", sep="\t", header=T, colClasses = c("row_names"="character"), data.table=FALSE)
+row.names(seqtab.nosingletons.nochim) <- seqtab.nosingletons.nochim[,1] #set row names
+seqtab.nosingletons.nochim <- seqtab.nosingletons.nochim[,-1] #remove column with the row names in it
+seqtab.nosingletons.nochim <- as.matrix(seqtab.nosingletons.nochim) #cast the object as a matrix
 
 # now replace the long ASV names (the actual sequences) with human-readable names, and save the new names and sequences as a .fasta file in your project working directory
 my_otu_table <- t(as.data.frame(seqtab.nosingletons.nochim)) #transposed (OTUs are rows) data frame. unclassing the otu_table() output avoids type/class errors later on
@@ -230,13 +230,6 @@ system("/home/lymelab/miniconda2/envs/qiime2-2019.7/bin/qiime tools import --inp
 system("rm -r assigntax")
 system(sprintf("/home/lymelab/miniconda2/envs/qiime2-2019.7/bin/qiime feature-classifier classify-consensus-vsearch --i-query rep_set.qza --i-reference-reads %s --i-reference-taxonomy %s --output-dir assigntax", BACREF, BACTAX))
 system("unzip assigntax/classification.qza -d assigntax/")
-
-
-
-
-
-
-
 
 #get file path for taxonomy file
 tempfile <- subset(dir(path="assigntax"), !grepl("classification.qza", dir(path="assigntax/")))
